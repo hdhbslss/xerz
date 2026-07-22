@@ -1,4 +1,4 @@
--- === Rivals 超多功能版 (修復按鈕) ===
+-- === Rivals 超多功能版 (穩定版) ===
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/Library.lua"))()
 
 local Window = Library:CreateWindow({
@@ -22,15 +22,15 @@ local UIS = game:GetService("UserInputService")
 local Camera = workspace.CurrentCamera
 local LP = Players.LocalPlayer
 
--- 狀態
-local VoidAuto, VoidRange = false, 400
-local Aimbot, SilentAim, TriggerBot, AimFOV, Smooth = false, false, false, 220, 0.2
-local ESPon, Box, Name, HP, Dist, Skel, Trace, HL = false, false, false, false, false, false, false, false
+-- 狀態變數
+local VoidAuto, VoidRange = true, 400
+local Aimbot, SilentAim, TriggerBot, AimFOV, Smooth = true, true, true, 220, 0.2
+local ESPon, Box, Name, HP, Dist, Trace, HL = true, true, true, true, true, true, true
 local Fly, FlySpd = false, 220
 local NoClip, InfJump, AntiKB = false, false, true
 local RainbowSkinOn = false
 
--- 工具
+-- 工具函式
 local function getClosest(dist, fov)
     local c, s = nil, dist or 9e9
     local sc = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
@@ -46,16 +46,16 @@ local function getClosest(dist, fov)
     return c
 end
 
--- ===== Combat =====
-local CombatGroup = Tabs.Combat:AddLeftGroupbox("戰鬥功能")
-CombatGroup:AddToggle("VoidAuto", {Text = "虛空自動攻擊", Default = true}):OnChanged(function(v) VoidAuto = v end)
-CombatGroup:AddSlider("VoidRange", {Text = "虛空範圍", Default = 400, Min = 50, Max = 1500}):OnChanged(function(v) VoidRange = v end)
-CombatGroup:AddToggle("Aimbot", {Text = "Aimbot", Default = true}):OnChanged(function(v) Aimbot = v end)
-CombatGroup:AddToggle("SilentAim", {Text = "Silent Aim", Default = true}):OnChanged(function(v) SilentAim = v end)
-CombatGroup:AddToggle("TriggerBot", {Text = "Trigger Bot", Default = true}):OnChanged(function(v) TriggerBot = v end)
-CombatGroup:AddToggle("AutoShoot", {Text = "Auto Shoot", Default = false})
-CombatGroup:AddSlider("AimFOV", {Text = "Aim FOV", Default = 220, Min = 30, Max = 900}):OnChanged(function(v) AimFOV = v end)
-CombatGroup:AddSlider("Smoothness", {Text = "Smoothness", Default = 0.2, Min = 0.05, Max = 1}):OnChanged(function(v) Smooth = v end)
+-- ==================== Combat ====================
+local Combat = Tabs.Combat
+Combat:AddToggle("VoidAuto", {Text = "虛空自動攻擊", Default = true}):OnChanged(function(v) VoidAuto = v end)
+Combat:AddSlider("VoidRange", {Text = "虛空範圍", Default = 400, Min = 50, Max = 1500}):OnChanged(function(v) VoidRange = v end)
+Combat:AddToggle("Aimbot", {Text = "Aimbot", Default = true}):OnChanged(function(v) Aimbot = v end)
+Combat:AddToggle("SilentAim", {Text = "Silent Aim", Default = true}):OnChanged(function(v) SilentAim = v end)
+Combat:AddToggle("TriggerBot", {Text = "Trigger Bot", Default = true}):OnChanged(function(v) TriggerBot = v end)
+Combat:AddToggle("AutoShoot", {Text = "Auto Shoot", Default = false})
+Combat:AddSlider("AimFOV", {Text = "Aim FOV", Default = 220, Min = 30, Max = 900}):OnChanged(function(v) AimFOV = v end)
+Combat:AddSlider("Smoothness", {Text = "Smoothness", Default = 0.2, Min = 0.05, Max = 1}):OnChanged(function(v) Smooth = v end)
 
 -- 虛空攻擊
 task.spawn(function()
@@ -78,7 +78,8 @@ task.spawn(function()
 end)
 
 -- Silent Aim
-local old = hookmetamethod(game, "__index", function(s, k)
+local old
+old = hookmetamethod(game, "__index", function(s, k)
     if s == Camera and k == "CFrame" and SilentAim then
         local t = getClosest(AimFOV)
         if t and t.Character and t.Character:FindFirstChild("Head") then
@@ -106,21 +107,25 @@ task.spawn(function()
             if t then
                 local c = LP.Character
                 local tool = c and c:FindFirstChildOfClass("Tool")
-                if tool then tool:Activate() task.wait(0.1) tool:Deactivate() end
+                if tool then
+                    tool:Activate()
+                    task.wait(0.1)
+                    tool:Deactivate()
+                end
             end
         end
     end
 end)
 
--- ===== Visuals =====
-local VisualsGroup = Tabs.Visuals:AddLeftGroupbox("透視功能")
-VisualsGroup:AddToggle("ESP", {Text = "ESP 總開關", Default = true}):OnChanged(function(v) ESPon = v end)
-VisualsGroup:AddToggle("BoxESP", {Text = "方框透視", Default = true}):OnChanged(function(v) Box = v end)
-VisualsGroup:AddToggle("NameESP", {Text = "名稱", Default = true}):OnChanged(function(v) Name = v end)
-VisualsGroup:AddToggle("HealthESP", {Text = "血量條", Default = true}):OnChanged(function(v) HP = v end)
-VisualsGroup:AddToggle("DistanceESP", {Text = "距離", Default = true}):OnChanged(function(v) Dist = v end)
-VisualsGroup:AddToggle("Tracers", {Text = "彈道線", Default = true}):OnChanged(function(v) Trace = v end)
-VisualsGroup:AddToggle("Highlight", {Text = "高亮", Default = true}):OnChanged(function(v)
+-- ==================== Visuals ====================
+local Visuals = Tabs.Visuals
+Visuals:AddToggle("ESP", {Text = "ESP 總開關", Default = true}):OnChanged(function(v) ESPon = v end)
+Visuals:AddToggle("BoxESP", {Text = "方框透視", Default = true}):OnChanged(function(v) Box = v end)
+Visuals:AddToggle("NameESP", {Text = "名稱", Default = true}):OnChanged(function(v) Name = v end)
+Visuals:AddToggle("HealthESP", {Text = "血量條", Default = true}):OnChanged(function(v) HP = v end)
+Visuals:AddToggle("DistanceESP", {Text = "距離", Default = true}):OnChanged(function(v) Dist = v end)
+Visuals:AddToggle("Tracers", {Text = "彈道線", Default = true}):OnChanged(function(v) Trace = v end)
+Visuals:AddToggle("Highlight", {Text = "高亮", Default = true}):OnChanged(function(v)
     HL = v
     for _, p in Players:GetPlayers() do
         if p ~= LP and p.Character then
@@ -148,12 +153,29 @@ task.spawn(function()
             local c = p.Character
             if not drawings[p] then
                 local d = {}
-                d.Box = Drawing.new("Square"); d.Box.Visible = false; d.Box.Thickness = 2; d.Box.Filled = false
-                d.Name = Drawing.new("Text"); d.Name.Visible = false; d.Name.Size = 13; d.Name.Center = true; d.Name.Outline = true
-                d.HPbg = Drawing.new("Square"); d.HPbg.Visible = false; d.HPbg.Filled = true
-                d.HPbar = Drawing.new("Square"); d.HPbar.Visible = false; d.HPbar.Filled = true
-                d.Dist = Drawing.new("Text"); d.Dist.Visible = false; d.Dist.Size = 13; d.Dist.Center = true; d.Dist.Outline = true
-                d.Tracer = Drawing.new("Line"); d.Tracer.Visible = false; d.Tracer.Thickness = 1
+                d.Box = Drawing.new("Square")
+                d.Box.Visible = false
+                d.Box.Thickness = 2
+                d.Box.Filled = false
+                d.Name = Drawing.new("Text")
+                d.Name.Visible = false
+                d.Name.Size = 13
+                d.Name.Center = true
+                d.Name.Outline = true
+                d.HPbg = Drawing.new("Square")
+                d.HPbg.Visible = false
+                d.HPbg.Filled = true
+                d.HPbar = Drawing.new("Square")
+                d.HPbar.Visible = false
+                d.HPbar.Filled = true
+                d.Dist = Drawing.new("Text")
+                d.Dist.Visible = false
+                d.Dist.Size = 13
+                d.Dist.Center = true
+                d.Dist.Outline = true
+                d.Tracer = Drawing.new("Line")
+                d.Tracer.Visible = false
+                d.Tracer.Thickness = 1
                 drawings[p] = d
             end
             local d = drawings[p]
@@ -161,7 +183,6 @@ task.spawn(function()
             local root = vis and c.HumanoidRootPart
             local head = vis and c.Head
 
-            -- Box
             if root and Box then
                 local pos, on = Camera:WorldToViewportPoint(root.Position)
                 if on then
@@ -173,19 +194,18 @@ task.spawn(function()
                 else d.Box.Visible = false end
             else d.Box.Visible = false end
 
-            -- Name
             if head and Name then
                 local pos, on = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 1, 0))
                 if on then d.Name.Position = Vector2.new(pos.X, pos.Y); d.Name.Text = p.Name; d.Name.Visible = true else d.Name.Visible = false end
             else d.Name.Visible = false end
 
-            -- HP
             local hum = c and c:FindFirstChildOfClass("Humanoid")
             if root and HP and hum then
                 local pos, on = Camera:WorldToViewportPoint(root.Position)
                 if on then
                     local s = 2000 / (Camera.CFrame.Position - root.Position).Magnitude
-                    local x, y = pos.X - 20 * s - 8, pos.Y - 60 * s
+                    local x = pos.X - 20 * s - 8
+                    local y = pos.Y - 60 * s
                     local h = 60 * s * (hum.Health / hum.MaxHealth)
                     d.HPbg.Position = Vector2.new(x - 1, y - 1)
                     d.HPbg.Size = Vector2.new(4, 60 * s + 2)
@@ -198,28 +218,28 @@ task.spawn(function()
                 else d.HPbg.Visible = false; d.HPbar.Visible = false end
             else d.HPbg.Visible = false; d.HPbar.Visible = false end
 
-            -- Distance
             if root and Dist then
                 local pos, on = Camera:WorldToViewportPoint(root.Position - Vector3.new(0, 3, 0))
                 if on then d.Dist.Position = Vector2.new(pos.X, pos.Y); d.Dist.Text = math.floor((Camera.CFrame.Position - root.Position).Magnitude) .. "m"; d.Dist.Visible = true else d.Dist.Visible = false end
             else d.Dist.Visible = false end
 
-            -- Tracer
             if root and Trace then
                 local pos, on = Camera:WorldToViewportPoint(root.Position)
                 if on then d.Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y); d.Tracer.To = Vector2.new(pos.X, pos.Y); d.Tracer.Visible = true else d.Tracer.Visible = false end
             else d.Tracer.Visible = false end
         end
-        -- 清理
         for p, d in pairs(drawings) do
-            if not p.Parent then for _, v in d do pcall(function() v:Remove() end) end; drawings[p] = nil end
+            if not p.Parent then
+                for _, v in d do pcall(function() v:Remove() end) end
+                drawings[p] = nil
+            end
         end
     end
 end)
 
--- ===== Movement =====
-local MoveGroup = Tabs.Movement:AddLeftGroupbox("移動功能")
-MoveGroup:AddToggle("Fly", {Text = "飛行模式", Default = false}):OnChanged(function(v)
+-- ==================== Movement ====================
+local Movement = Tabs.Movement
+Movement:AddToggle("Fly", {Text = "飛行模式", Default = false}):OnChanged(function(v)
     Fly = v
     local c = LP.Character
     local r = c and c:FindFirstChild("HumanoidRootPart")
@@ -228,43 +248,41 @@ MoveGroup:AddToggle("Fly", {Text = "飛行模式", Default = false}):OnChanged(f
         if v then h.PlatformStand = true else h.PlatformStand = false end
     end
 end)
-MoveGroup:AddSlider("FlySpeed", {Text = "飛行速度", Default = 220, Min = 50, Max = 800}):OnChanged(function(v) FlySpd = v end)
-MoveGroup:AddSlider("WalkSpeed", {Text = "走路速度", Default = 90, Min = 16, Max = 400}):OnChanged(function(v)
+Movement:AddSlider("FlySpeed", {Text = "飛行速度", Default = 220, Min = 50, Max = 800}):OnChanged(function(v) FlySpd = v end)
+Movement:AddSlider("WalkSpeed", {Text = "走路速度", Default = 90, Min = 16, Max = 400}):OnChanged(function(v)
     local h = LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
     if h then h.WalkSpeed = v end
 end)
-MoveGroup:AddSlider("JumpPower", {Text = "跳躍力", Default = 160, Min = 50, Max = 500}):OnChanged(function(v)
+Movement:AddSlider("JumpPower", {Text = "跳躍力", Default = 160, Min = 50, Max = 500}):OnChanged(function(v)
     local h = LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
     if h then h.JumpPower = v end
 end)
-MoveGroup:AddToggle("NoClip", {Text = "穿牆", Default = false}):OnChanged(function(v)
+Movement:AddToggle("NoClip", {Text = "穿牆", Default = false}):OnChanged(function(v)
     NoClip = v
     local c = LP.Character
     if c then for _, p in c:GetDescendants() do if p:IsA("BasePart") then p.CanCollide = not v end end end
 end)
-MoveGroup:AddToggle("InfiniteJump", {Text = "無限跳", Default = false}):OnChanged(function(v) InfJump = v end)
-MoveGroup:AddToggle("AntiKnockback", {Text = "防擊退", Default = true}):OnChanged(function(v) AntiKB = v end)
+Movement:AddToggle("InfiniteJump", {Text = "無限跳", Default = false}):OnChanged(function(v) InfJump = v end)
+Movement:AddToggle("AntiKnockback", {Text = "防擊退", Default = true}):OnChanged(function(v) AntiKB = v end)
 
--- 飛行
 task.spawn(function()
     while task.wait() do
         if Fly then
             local r = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
             if r then
                 local vel = Vector3.zero
-                if UIS:IsKeyDown(Enum.KeyCode.W) then vel += Camera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.S) then vel -= Camera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.A) then vel -= Camera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.D) then vel += Camera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.Space) then vel += Vector3.new(0, 1, 0) end
-                if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then vel -= Vector3.new(0, 1, 0) end
+                if UIS:IsKeyDown(Enum.KeyCode.W) then vel = vel + Camera.CFrame.LookVector end
+                if UIS:IsKeyDown(Enum.KeyCode.S) then vel = vel - Camera.CFrame.LookVector end
+                if UIS:IsKeyDown(Enum.KeyCode.A) then vel = vel - Camera.CFrame.RightVector end
+                if UIS:IsKeyDown(Enum.KeyCode.D) then vel = vel + Camera.CFrame.RightVector end
+                if UIS:IsKeyDown(Enum.KeyCode.Space) then vel = vel + Vector3.new(0, 1, 0) end
+                if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then vel = vel - Vector3.new(0, 1, 0) end
                 r.Velocity = vel.Unit * FlySpd
             end
         end
     end
 end)
 
--- 無限跳
 UIS.JumpRequest:Connect(function()
     if InfJump then
         local h = LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
@@ -272,7 +290,6 @@ UIS.JumpRequest:Connect(function()
     end
 end)
 
--- 防擊退
 task.spawn(function()
     while task.wait(1) do
         if AntiKB then
@@ -282,9 +299,9 @@ task.spawn(function()
     end
 end)
 
--- ===== Skins =====
-local SkinGroup = Tabs.Skins:AddLeftGroupbox("皮膚功能")
-SkinGroup:AddButton("隨機皮膚", {Text = "隨機皮膚", Callback = function()
+-- ==================== Skins ====================
+local Skins = Tabs.Skins
+Skins:AddButton("RandomSkin", {Text = "隨機皮膚", Callback = function()
     local c = LP.Character
     if c then
         local col = Color3.fromRGB(math.random(255), math.random(255), math.random(255))
@@ -294,10 +311,10 @@ SkinGroup:AddButton("隨機皮膚", {Text = "隨機皮膚", Callback = function(
             end
         end
     end
-    Library:Notify("已套用", 2)
+    Library:Notify("已套用隨機皮膚", 2)
 end})
 
-SkinGroup:AddToggle("RainbowSkin", {Text = "彩虹皮膚", Default = false}):OnChanged(function(v)
+Skins:AddToggle("RainbowSkin", {Text = "彩虹皮膚", Default = false}):OnChanged(function(v)
     RainbowSkinOn = v
     if v then
         task.spawn(function()
@@ -317,10 +334,10 @@ SkinGroup:AddToggle("RainbowSkin", {Text = "彩虹皮膚", Default = false}):OnC
     end
 end})
 
--- ===== Misc =====
-local MiscGroup = Tabs.Misc:AddLeftGroupbox("其他功能")
-MiscGroup:AddToggle("AutoFarm", {Text = "自動農分數", Default = false})
-MiscGroup:AddToggle("AntiAFK", {Text = "防AFK", Default = true}):OnChanged(function(v)
+-- ==================== Misc ====================
+local Misc = Tabs.Misc
+Misc:AddToggle("AutoFarm", {Text = "自動農分數", Default = false})
+Misc:AddToggle("AntiAFK", {Text = "防AFK", Default = true}):OnChanged(function(v)
     if v then
         LP.Idled:Connect(function()
             game:GetService("VirtualUser"):Button2Down(Vector2.new(), Camera.CFrame)
@@ -329,7 +346,8 @@ MiscGroup:AddToggle("AntiAFK", {Text = "防AFK", Default = true}):OnChanged(func
         end)
     end
 end)
-MiscGroup:AddButton("ServerHop", {Text = "換伺服器", Callback = function()
+Misc:AddButton("ServerHop", {Text = "換伺服器", Callback = function()
+    Library:Notify("正在尋找伺服器...", 3)
     local ok, s = pcall(function()
         return game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?limit=100"))
     end)
@@ -340,14 +358,15 @@ MiscGroup:AddButton("ServerHop", {Text = "換伺服器", Callback = function()
         end
         if #ids > 0 then
             game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, ids[math.random(#ids)])
+        else
+            Library:Notify("沒有可用伺服器", 3)
         end
     end
-    Library:Notify("換服中...", 3)
 end})
-MiscGroup:AddButton("Rejoin", {Text = "重新加入", Callback = function()
+Misc:AddButton("Rejoin", {Text = "重新加入", Callback = function()
     game:GetService("TeleportService"):Teleport(game.PlaceId, LP)
 end})
-MiscGroup:AddButton("Unload", {Text = "卸載腳本", Callback = function()
+Misc:AddButton("Unload", {Text = "卸載腳本", Callback = function()
     for _, d in pairs(drawings) do
         for _, v in d do pcall(function() v:Remove() end) end
     end
@@ -355,9 +374,9 @@ MiscGroup:AddButton("Unload", {Text = "卸載腳本", Callback = function()
     Library:Unload()
 end})
 
--- 快捷鍵
+-- ==================== 快捷鍵 ====================
 UIS.InputBegan:Connect(function(i)
     if i.KeyCode == Enum.KeyCode.RightShift then Window:Toggle() end
 end)
 
-Library:Notify("載入完成 | 右Shift 開關面板", 5)
+Library:Notify("超多功能版 已載入 | 右Shift 開關面板", 5)
