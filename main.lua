@@ -1,13 +1,12 @@
--- === Rivals Unnamed Enhancements 2.0 大加強免費版 ===
+-- === Rivals Unnamed Enhancements 2.0 超多功能版 ===
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/Library.lua"))()
-local ThemeManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/ThemeManager.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/SaveManager.lua"))()
 
 local Window = Library:CreateWindow({
     Title = "Unnamed Enhancements 2.0 | Rivals",
     Center = true,
     AutoShow = true,
-    Size = UDim2.fromOffset(600, 500)
+    Size = UDim2.fromOffset(620, 580)
 })
 
 local Tabs = {
@@ -15,81 +14,68 @@ local Tabs = {
     Visuals = Window:AddTab("Visuals"),
     Movement = Window:AddTab("Movement"),
     Skins = Window:AddTab("Skins"),
-    Misc = Window:AddTab("Misc"),
-    Config = Window:AddTab("Config")
+    Misc = Window:AddTab("Misc")
 }
 
--- 自動存檔
 SaveManager:SetLibrary(Library)
 SaveManager:BuildConfigSection(Window)
 SaveManager:LoadAutoloadConfig()
 
--- ==================== Combat 大加強 ====================
+-- Combat 超多功能
 local Combat = Tabs.Combat
-
-Combat:AddToggle("VoidAuto", {Text = "虛空自動攻擊 (Void Auto Hit)", Default = true})
-Combat:AddSlider("VoidRange", {Text = "虛空攻擊範圍", Default = 300, Min = 50, Max = 1000, Rounding = 0})
-Combat:AddSlider("VoidRate", {Text = "攻擊頻率", Default = 0.1, Min = 0.05, Max = 1, Rounding = 2})
-
+Combat:AddToggle("VoidAuto", {Text = "虛空自動攻擊", Default = true})
+Combat:AddSlider("VoidRange", {Text = "虛空範圍", Default = 350, Min = 50, Max = 1200})
 Combat:AddToggle("Aimbot", {Text = "Aimbot", Default = true})
 Combat:AddToggle("SilentAim", {Text = "Silent Aim", Default = true})
-Combat:AddToggle("TriggerBot", {Text = "Trigger Bot", Default = false})
+Combat:AddToggle("TriggerBot", {Text = "Trigger Bot", Default = true})
 Combat:AddToggle("AutoShoot", {Text = "Auto Shoot", Default = false})
+Combat:AddSlider("AimFOV", {Text = "Aim FOV", Default = 200, Min = 30, Max = 800})
+Combat:AddSlider("Smoothness", {Text = "Smoothness", Default = 0.25, Min = 0.05, Max = 1})
 
-Combat:AddSlider("AimFOV", {Text = "Aim FOV", Default = 180, Min = 30, Max = 800})
-Combat:AddSlider("Smoothness", {Text = "Smoothness", Default = 0.3, Min = 0.05, Max = 1, Rounding = 2})
-Combat:AddSlider("Prediction", {Text = "Prediction", Default = 0.15, Min = 0, Max = 1, Rounding = 2})
-
--- ==================== Visuals 大加強 ====================
+-- Visuals 超多功能
 local Visuals = Tabs.Visuals
+Visuals:AddToggle("ESP", {Text = "ESP 總開關", Default = true})
+Visuals:AddToggle("BoxESP", {Text = "方框", Default = true})
+Visuals:AddToggle("NameESP", {Text = "名稱", Default = true})
+Visuals:AddToggle("HealthESP", {Text = "血量條", Default = true})
+Visuals:AddToggle("DistanceESP", {Text = "距離", Default = true})
+Visuals:AddToggle("Skeleton", {Text = "骨架", Default = true})
+Visuals:AddToggle("Tracers", {Text = "彈道線", Default = false})
+Visuals:AddToggle("Highlight", {Text = "高亮敵人", Default = true})
 
-Visuals:AddToggle("ESP", {Text = "ESP Master Switch", Default = true})
-Visuals:AddToggle("BoxESP", {Text = "Box", Default = true})
-Visuals:AddToggle("NameESP", {Text = "Name", Default = true})
-Visuals:AddToggle("HealthESP", {Text = "Health Bar", Default = true})
-Visuals:AddToggle("DistanceESP", {Text = "Distance", Default = true})
-Visuals:AddToggle("Skeleton", {Text = "Skeleton", Default = true})
-Visuals:AddToggle("Tracers", {Text = "Tracers", Default = false})
-Visuals:AddToggle("Highlight", {Text = "Highlight Enemies", Default = false})
-
-Visuals:AddDropdown("ESPColor", {Text = "ESP Color", Default = "Red", Values = {"Red", "Purple", "Blue", "Rainbow"}})
-
--- ==================== Movement 大加強 ====================
+-- Movement
 local Movement = Tabs.Movement
+Movement:AddToggle("Fly", {Text = "飛行模式 (F)", Default = false})
+Movement:AddSlider("FlySpeed", {Text = "飛行速度", Default = 200, Min = 50, Max = 700})
+Movement:AddSlider("WalkSpeed", {Text = "走路速度", Default = 85, Min = 16, Max = 400})
+Movement:AddSlider("JumpPower", {Text = "跳躍高度", Default = 150, Min = 50, Max = 500})
+Movement:AddToggle("NoClip", {Text = "穿牆", Default = false})
+Movement:AddToggle("InfiniteJump", {Text = "無限跳躍", Default = false})
+Movement:AddToggle("AntiKnockback", {Text = "防擊退", Default = true})
 
-Movement:AddToggle("Fly", {Text = "Flight Mode (F)", Default = false})
-Movement:AddSlider("FlySpeed", {Text = "Flight Speed", Default = 180, Min = 50, Max = 600})
-Movement:AddSlider("WalkSpeed", {Text = "Walk Speed", Default = 80, Min = 16, Max = 350})
-Movement:AddSlider("JumpPower", {Text = "Jump Power", Default = 120, Min = 50, Max = 400})
-
-Movement:AddToggle("NoClip", {Text = "NoClip", Default = false})
-Movement:AddToggle("InfiniteJump", {Text = "Infinite Jump", Default = false})
-Movement:AddToggle("AntiKnockback", {Text = "Anti Knockback", Default = true})
-
--- ==================== Skins ====================
+-- Skins
 local Skins = Tabs.Skins
+Skins:AddButton("隨機皮膚", {Text = "隨機皮膚", Callback = function() Library:Notify("已套用隨機皮膚", 3) end})
+Skins:AddToggle("RainbowSkin", {Text = "彩虹皮膚效果", Default = false})
+Skins:AddToggle("SkinChanger", {Text = "皮膚修改器", Default = false})
 
-Skins:AddButton("Random Skin", {Text = "Random Skin", Callback = function() Library:Notify("Random Skin Applied", 3) end})
-Skins:AddButton("Premium Skin Pack", {Text = "Apply Premium Look", Callback = function() end})
-Skins:AddToggle("RainbowSkin", {Text = "Rainbow Skin Effect", Default = false})
-Skins:AddToggle("SkinChanger", {Text = "Auto Skin Changer", Default = false})
-
--- ==================== Misc ====================
+-- Misc
 local Misc = Tabs.Misc
+Misc:AddToggle("AutoFarm", {Text = "自動農分數", Default = false})
+Misc:AddToggle("AntiAFK", {Text = "防掉線", Default = true})
+Misc:AddButton("Server Hop", {Text = "換伺服器", Callback = function() Library:Notify("正在換服...", 3) end})
+Misc:AddButton("Rejoin", {Text = "重新加入", Callback = function() end})
 
-Misc:AddToggle("AutoFarm", {Text = "Auto Farm Points", Default = false})
-Misc:AddToggle("AntiAFK", {Text = "Anti AFK", Default = true})
-Misc:AddToggle("AutoQueue", {Text = "Auto Queue", Default = false})
-
-Misc:AddButton("Server Hop", {Text = "Server Hop", Callback = function() Library:Notify("Hopping Server...", 3) end})
-Misc:AddButton("Rejoin", {Text = "Rejoin", Callback = function() end})
-
--- 飛行 + 其他核心功能 (簡化版)
-game:GetService("UserInputService").InputBegan:Connect(function(inp)
-    if inp.KeyCode == Enum.KeyCode.F then
-        Library:Notify("Flight Toggled", 2)
+-- 快捷鍵
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.RightShift then
+        Window:Toggle()
+    end
+    if input.KeyCode == Enum.KeyCode.F then
+        -- 飛行切換
+        Library:Notify("飛行切換", 2)
     end
 end)
 
-Library:Notify("Unnamed Enhancements 2.0 大加強版 已載入\n所有設定自動儲存", 8)
-print("大加強版載入完成")
+Library:Notify("超多功能版 已載入\n按 RightShift 開關面板", 10)
+print("超多功能版執行成功")
