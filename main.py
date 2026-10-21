@@ -5,8 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 
 # ============ 設定區（改這裡） ============
-TOKEN = "貼上你的新Token"
-GUILD_ID = 0          # 伺服器ID
+TOKEN = "MTU2MjQ3ODkxMTE2ODcxMjgwNA.Gdm04x.IvOdLHf0IAYbZlPja0e1kdYCzNFJrNJKWmkLHM"
+GUILD_ID = 1529849780275118182          # 伺服器ID
 # =========================================
 
 db = sqlite3.connect("data.db")
